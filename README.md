@@ -18,22 +18,18 @@
 
 ## 📌 Overview
 
-HashiCorp Nomad offline security auditor (agent configs, job specs, ACL policies)
+ONomadX is an offline, read-only HashiCorp Nomad security auditor for agent HCL/JSON configs, job specs, and ACL policies. It uses a stdlib HCL-subset parser, merges `/etc/nomad.d` directories, scans for secrets (masked), and checks ACL, TLS/mTLS, gossip, drivers, volumes, Vault, templates, and permissions. Reports export to TXT, MD, JSON, CSV, or SARIF.
 
 ---
 
 ## ✨ Features
 
-- Offline, strictly read-only auditor for Nomad only (agent configs, job specs, ACL policies) — no API calls, no network, nothing is ever modified
-- Stdlib HCL-subset parser — blocks, labels, attributes, lists, maps/objects, heredocs (<<EOF / <<-EOF), comments (#, //, /* */), interpolation kept verbatim
-- JSON agent configs + `nomad job inspect` JSON + `nomad acl policy info -json` normalisation
-- Directory-merge semantics for /etc/nomad.d/*.hcl (absence checks evaluated on the merged agent view)
-- 90+ rules — ACL, TLS/mTLS, gossip, listeners, UI, drivers, host volumes, Vault, tasks, images, resources, templates, artifacts, workload identity, ACL policies
-- Secret scanning (Nomad/Vault tokens, PEM keys) with masking everywhere — reports never carry secrets
-- File-permission checks (TLS keys, certs, data_dir, plugin_dir) with optional --root for offline images
-- Every rule carries severity, CWE, MITRE ATT&CK and remediation; weighted score + A+…F grade
-- Exports TXT / MD / JSON / CSV / SARIF 2.1.0
-- --fail-on (exit 2), --demo self-test (exit 3), --list-rules, --explain, hardened templates
+- Offline audit of Nomad agent configs, job specs, and ACL policies — no API calls or modifications
+- Stdlib HCL-subset parser (blocks, labels, heredocs, comments) plus JSON agent/job/ACL normalisation
+- Directory-merge semantics for `/etc/nomad.d/*.hcl` with absence checks on the merged view
+- 90+ rules covering ACL, TLS/mTLS, gossip, UI, drivers, host volumes, Vault, tasks, templates, artifacts, workload identity
+- Secret scanning (tokens, PEM keys) with masking; optional `--root` permission checks for TLS keys and data_dir
+- Severity/CWE/ATT&CK/remediation per rule; score/grade; multi-format export; `--demo` and fail-on gates
 
 ---
 
@@ -47,7 +43,10 @@ HashiCorp Nomad offline security auditor (agent configs, job specs, ACL policies
 ## 🚀 Usage
 
 ```bash
-./ONomadX
+./ONomadX --scan
+./ONomadX /etc/nomad.d job.json --format sarif -o nomad.sarif --fail-on high
+./ONomadX --demo --list-rules
+./ONomadX --help
 ```
 
 ---
